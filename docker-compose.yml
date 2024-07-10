@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  model-app:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/code
+    environment:
+      - FLASK_ENV=development
+    command: python app.py
+  # You can add more services here if needed, like a database
+  # db:
+  #   image: postgres:13
+  #   environment:
+  #     - POSTGRES_DB=mydb
+  #     - POSTGRES_USER=myuser
+  #     - POSTGRES_PASSWORD=mypassword
