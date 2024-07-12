@@ -13,7 +13,6 @@ def home():
 @app.route('/predict', methods=['POST', 'GET'])
 def predict():
     if request.method == 'POST':
-        print(request.files)
         try:
             if 'frontImage' not in request.files or 'backImage' not in request.files or not request.files['frontImage'] or not request.files['backImage']:
                 return jsonify({'error': 'Request is missing required files or files are empty'})
