@@ -18,3 +18,4 @@ RUN pip install -r requirements.txt
 COPY . /code/
 
 CMD ["python", "app.py"]
+EXPOSE 5000
