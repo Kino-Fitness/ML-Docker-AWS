@@ -6,7 +6,7 @@ on:
 env:
   AWS_REGION: us-east-1
   ECR_REPOSITORY: kino-fitness-images
-  ECS_SERVICE: MY_ECS_SERVICE
+  ECS_SERVICE: 3dModelAPIService
   ECS_CLUSTER: KinoFitnessCluster
   ECS_TASK_DEFINITION: .aws/task-definition.json 
   CONTAINER_NAME: KinoFitnessContainer
@@ -36,7 +36,7 @@ jobs:
       id: login-ecr-public
       uses: aws-actions/amazon-ecr-login@v2
       with:
-          registry-type: public
+        registry-type: public
 
     - name: Build, tag, and push image to Amazon ECR Public
       id: build-image
@@ -63,6 +63,6 @@ jobs:
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
-        #service: ${{ env.ECS_SERVICE }}
+        service: ${{ env.ECS_SERVICE }}
         cluster: ${{ env.ECS_CLUSTER }}
         wait-for-service-stability: true

@@ -1,8 +1,9 @@
 version: '3.8'
 
 services:
-  model-app:
+  flaskapi:
     build: .
+    container_name: flaskapi
     ports:
       - "5000:5000"
     volumes:

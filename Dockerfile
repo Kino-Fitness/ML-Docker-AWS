@@ -11,8 +11,10 @@ RUN pip install --upgrade pip
 
 # copy just requirements and install before rest of code to avoid having to
 # reinstall packages during build every time code changes
-COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
+COPY requirements/ /code/requirements/
+COPY requirements/requirements.txt .
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements/requirements.txt
 
 # copy code files
 COPY . /code/
