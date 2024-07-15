@@ -74,8 +74,14 @@ jobs:
           exit 1
         fi
         echo "Using new task definition: $NEW_TASK_DEF_ARN"
-        aws ecs update-service --cluster ${{ env.ECS_CLUSTER }} --service ${{ env.ECS_SERVICE }} --task-definition $NEW_TASK_DEF_ARN --force-new-deployment
-    
-    - name: Wait for service to stabilize
+        aws ecs update-service --cluster ${{ env.ECS_CLUSTER }} --service ${{ env.ECS_SERVICE }} --task-definition $NEW_TASK_DEF_ARN --force-new-deployment --desired-count 1
+
+    - name: Stop old tasks
       run: |
-        aws ecs wait services-stable --cluster ${{ env.ECS_CLUSTER }} --services ${{ env.ECS_SERVICE }}
+        OLD_TASK_IDS=$(aws ecs list-tasks --cluster ${{ env.ECS_CLUSTER }} --service-name ${{ env.ECS_SERVICE }} --desired-status RUNNING --query 'taskArns[*]' --output text)
+        for TASK_ID in $OLD_TASK_IDS; do
+          if [[ $TASK_ID != *$NEW_TASK_DEF_ARN* ]]; then
+            echo "Stopping old task: $TASK_ID"
+            aws ecs stop-task --cluster ${{ env.ECS_CLUSTER }} --task $TASK_ID
+          fi
+        done
