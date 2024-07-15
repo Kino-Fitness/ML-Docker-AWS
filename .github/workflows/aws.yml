@@ -70,7 +70,12 @@ jobs:
     
     - name: Update ECS service with new task definition
       run: |
-        TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition ${{ env.CONTAINER_NAME }} --query 'taskDefinition.taskDefinitionArn' --output text)
+        TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK_DEFINITION }} --query 'taskDefinition.taskDefinitionArn' --output text)
+        if [ -z "$TASK_DEFINITION" ]; then
+          echo "Failed to get task definition ARN"
+          exit 1
+        fi
+        echo "Using task definition: $TASK_DEFINITION"
         aws ecs update-service --cluster ${{ env.ECS_CLUSTER }} --service ${{ env.ECS_SERVICE }} --task-definition $TASK_DEFINITION --force-new-deployment
     
     - name: Wait for service to stabilize
