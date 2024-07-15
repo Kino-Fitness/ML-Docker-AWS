@@ -2,8 +2,8 @@ from flask import Flask, request, jsonify, render_template
 import os
 import tempfile
 from PIL import Image
-from services import get_predictions
-
+from scripts.measurements import get_predictions
+from scripts.kinoscore import get_kino_score
 app = Flask(__name__)
 
 @app.route('/')
@@ -58,6 +58,20 @@ def predict():
             return jsonify({'error': str(e)})
     else:
         return jsonify({'error': 'Method not allowed'})
+
+
+@app.route('/kino_score', methods=['POST', 'GET'])
+def kino_score():
+    if request.method == 'POST':
+        try:
+            user_data = request.get_json()
+            result = get_kino_score(user_data)
+            return jsonify(result)
+        except Exception as e:
+            return jsonify({'error': str(e)})
+    else:
+        return jsonify({'error': 'Method not allowed'})
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

@@ -63,11 +63,16 @@ jobs:
         task-definition: ${{ env.ECS_TASK_DEFINITION }}
         container-name: ${{ env.CONTAINER_NAME }}
         image: ${{ steps.build-image.outputs.image }}
-
-    - name: Deploy Amazon ECS task definition
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      with:
-        task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: ${{ env.ECS_SERVICE }}
-        cluster: ${{ env.ECS_CLUSTER }}
-        wait-for-service-stability: true
+    
+    - name: Register new ECS task definition
+      run: |
+        aws ecs register-task-definition --cli-input-json file://${{ steps.task-def.outputs.task-definition }}
+    
+    - name: Update ECS service with new task definition
+      run: |
+        TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition ${{ env.CONTAINER_NAME }} --query 'taskDefinition.taskDefinitionArn' --output text)
+        aws ecs update-service --cluster ${{ env.ECS_CLUSTER }} --service ${{ env.ECS_SERVICE }} --task-definition $TASK_DEFINITION --force-new-deployment
+    
+    - name: Wait for service to stabilize
+      run: |
+        aws ecs wait services-stable --cluster ${{ env.ECS_CLUSTER }} --services ${{ env.ECS_SERVICE }}

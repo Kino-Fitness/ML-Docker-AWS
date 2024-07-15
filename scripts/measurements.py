@@ -30,7 +30,7 @@ def preprocess(frontImage, backImage, weight, height, gender, demographic):
     return frontImage, backImage, tabular_data
 
 def get_predictions(frontImage, backImage, weight, height, gender, demographic):
-    model_path = '/code/model.keras'
+    model_path = '/code/files/model.keras'
     if not os.path.exists(model_path):
         raise FileNotFoundError(f"Model file not found: {model_path}")
     
