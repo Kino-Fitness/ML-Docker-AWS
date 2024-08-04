@@ -20,7 +20,6 @@ ssh: ## SSH into running flaskapi container
 bash: ## Get a bash shell into the flaskapi container
 	docker compose run --rm --no-deps flaskapi bash
 
-
 pip-compile: ## Compiles your requirements.in file to requirements.txt
 	@docker compose run --rm --no-deps flaskapi pip-compile requirements/requirements.in
 

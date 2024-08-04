@@ -1,9 +1,11 @@
 import os
 import tempfile
 from PIL import Image
-import keras
 import numpy as np
 import tensorflow as tf
+from tensorflow.keras.models import load_model
+import boto3
+import keras
 
 def preprocess(frontImage, backImage, weight, height, gender, demographic):
     frontImage = frontImage.resize((224, 224)).convert('RGB')
@@ -31,10 +33,21 @@ def preprocess(frontImage, backImage, weight, height, gender, demographic):
 
 def get_predictions(frontImage, backImage, weight, height, gender, demographic):
     model_path = '/code/files/model.keras'
+
     if not os.path.exists(model_path):
-        raise FileNotFoundError(f"Model file not found: {model_path}")
-    
-    model = keras.models.load_model(model_path)
+        bucket_name = 'ml-models-kino'
+        file_key = 'contralateral-measurements/model.keras'
+        local_file_name = model_path
+
+        # Download the .keras file from S3
+        s3 = boto3.client(
+            's3',
+            aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+            aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
+        )
+        s3.download_file(bucket_name, file_key, local_file_name)
+
+    model = load_model(model_path)
 
     front_image, back_image, tabular_data = preprocess(frontImage, backImage, weight, height, gender, demographic)
 

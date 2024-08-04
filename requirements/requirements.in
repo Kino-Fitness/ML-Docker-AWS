@@ -7,3 +7,5 @@ keras
 numpy
 tensorflow
 pip-tools
+boto3
+python-dotenv
