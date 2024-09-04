@@ -1,14 +1,53 @@
 from flask import Flask, request, jsonify, render_template
 import os
 import tempfile
+import redis
 from PIL import Image
 from scripts.measurements import get_predictions
 from scripts.kinoscore import get_kino_score
+from scripts.database import get_fitness_goals
 app = Flask(__name__)
+
+# Connect to Redis
+redis_host = 'redis'
+redis_port = 6379
+r = redis.Redis(host=redis_host, port=redis_port, decode_responses=True)
 
 @app.route('/')
 def home():
     return render_template('index.html')
+
+@app.route('/kino_bot', methods=['POST', 'GET'])
+def kino_bot():
+    if request.method == 'POST':
+        try:
+            user_id = request.form.get('user_id')
+            # prompt = request.form.get('prompt')
+            if not user_id:
+                return jsonify({'error': 'user_id is required'}), 400
+            
+            # if not prompt:
+            #     return jsonify({'error': 'prompt is required'}), 400
+
+            cache_key = f"user:{user_id}:fitness_goals"
+            cached_goals = r.get(cache_key)
+            
+            if cached_goals:
+                print("foudn cache!!!!!!!!!")
+                return jsonify({'fitness_goals': cached_goals, 'source': 'cache'})
+            
+            print("fechign from DB!!!!!!")
+            result = get_fitness_goals(user_id)
+            r.set(cache_key, str(result))
+            r.expire(cache_key, 3600)  # Set an expiration time (1 hour)
+            
+            return jsonify({'fitness_goals': result, 'source': 'database'})
+
+        except Exception as e:
+            return jsonify({'error': str(e)})
+    else:
+        return jsonify({'error': 'Method not allowed'}), 405
+
 
 @app.route('/predict', methods=['POST', 'GET'])
 def predict():

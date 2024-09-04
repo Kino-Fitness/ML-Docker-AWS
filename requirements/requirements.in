@@ -9,3 +9,6 @@ tensorflow
 pip-tools
 boto3
 python-dotenv
+mysql-connector-python
+openai
+redis
