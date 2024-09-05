@@ -2,10 +2,12 @@ from flask import Flask, request, jsonify, render_template
 import os
 import tempfile
 import redis
+import json
 from PIL import Image
 from scripts.measurements import get_predictions
 from scripts.kinoscore import get_kino_score
 from scripts.database import get_fitness_goals
+from scripts.kinobot import get_openai_response
 app = Flask(__name__)
 
 # Connect to Redis
@@ -22,27 +24,38 @@ def kino_bot():
     if request.method == 'POST':
         try:
             user_id = request.form.get('user_id')
-            # prompt = request.form.get('prompt')
+            prompt = request.form.get('prompt')
             if not user_id:
                 return jsonify({'error': 'user_id is required'}), 400
             
-            # if not prompt:
-            #     return jsonify({'error': 'prompt is required'}), 400
+            if not prompt:
+                return jsonify({'error': 'prompt is required'}), 400
 
             cache_key = f"user:{user_id}:fitness_goals"
             cached_goals = r.get(cache_key)
+            expiration_time = 3600
             
-            if cached_goals:
-                print("foudn cache!!!!!!!!!")
-                return jsonify({'fitness_goals': cached_goals, 'source': 'cache'})
-            
-            print("fechign from DB!!!!!!")
-            result = get_fitness_goals(user_id)
-            r.set(cache_key, str(result))
-            r.expire(cache_key, 3600)  # Set an expiration time (1 hour)
-            
-            return jsonify({'fitness_goals': result, 'source': 'database'})
+            if not cached_goals:
+                cached_goals = get_fitness_goals(user_id)
+                r.set(cache_key, str(cached_goals))
+                r.expire(cache_key, expiration_time)
 
+            chat_history_key = f"user:{user_id}:chat_history"
+            chat_history = r.get(chat_history_key)
+
+            if chat_history:
+                chat_history = json.loads(chat_history)
+            else:
+                chat_history = []
+
+            # Get response from OpenAI, passing the fitness goals separately
+            response, updated_chat_history = get_openai_response(prompt, cached_goals, chat_history)
+
+            r.set(chat_history_key, json.dumps(updated_chat_history))
+            r.expire(chat_history_key, expiration_time) 
+
+            return jsonify({'response': response})
+            
         except Exception as e:
             return jsonify({'error': str(e)})
     else:
