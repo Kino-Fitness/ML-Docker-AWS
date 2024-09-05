@@ -27,17 +27,15 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Create .env for S3
-    run: |
-      echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> .env
-      echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> .env
-      echo "DB_HOST_IP=${{ secrets.DB_HOST_IP }}" >> .env
-      echo "DB_USER=${{ secrets.DB_USER }}" >> .env
-      echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-      echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
-      echo "DB_PORT_NUMBER=${{ secrets.DB_PORT_NUMBER }}" >> .env
-      echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
-
-
+      run: |
+        echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> .env
+        echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> .env
+        echo "DB_HOST_IP=${{ secrets.DB_HOST_IP }}" >> .env
+        echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+        echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+        echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+        echo "DB_PORT_NUMBER=${{ secrets.DB_PORT_NUMBER }}" >> .env
+        echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -69,12 +67,12 @@ jobs:
         task-definition: ${{ env.ECS_TASK_DEFINITION }}
         container-name: ${{ env.CONTAINER_NAME }}
         image: ${{ steps.build-image.outputs.image }}
-    
+
     - name: Register new ECS task definition
       run: |
         NEW_TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://${{ steps.task-def.outputs.task-definition }} --query 'taskDefinition.taskDefinitionArn' --output text)
         echo "NEW_TASK_DEF_ARN=$NEW_TASK_DEF_ARN" >> $GITHUB_ENV
-    
+
     - name: Update ECS service with new task definition
       run: |
         if [ -z "$NEW_TASK_DEF_ARN" ]; then
