@@ -12,9 +12,8 @@ services:
       - FLASK_ENV=development
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-    command: python app.py
     depends_on:
-      - redis  
+      - redis
 
   redis:
     image: "redis:latest"

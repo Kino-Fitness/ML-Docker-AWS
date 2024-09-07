@@ -10,9 +10,12 @@ from scripts.database import get_fitness_goals
 from scripts.kinobot import get_openai_response
 app = Flask(__name__)
 
-# Connect to Redis
-redis_host = 'redis'
-redis_port = 6379
+from dotenv import load_dotenv
+load_dotenv()
+
+# Redis configuration
+redis_host = os.environ.get('REDIS_HOST', 'redis')
+redis_port = int(os.environ.get('REDIS_PORT', 6379))
 r = redis.Redis(host=redis_host, port=redis_port, decode_responses=True)
 
 @app.route('/')
@@ -125,4 +128,4 @@ def kino_score():
         return jsonify({'error': 'Method not allowed'})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000)

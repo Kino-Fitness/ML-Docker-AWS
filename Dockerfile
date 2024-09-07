@@ -24,5 +24,5 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # copy code files
 COPY . /code/
 
-CMD ["python", "app.py"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
 EXPOSE 5000
