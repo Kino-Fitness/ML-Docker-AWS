@@ -163,7 +163,20 @@ def predict():
             
             frontImage = Image.open(tempFrontImage.name).convert('RGB')
             backImage = Image.open(tempBackImage.name).convert('RGB')
-            result = get_predictions(frontImage, backImage, weight, height, gender, demographic)
+            # result = get_predictions(frontImage, backImage, weight, height, gender, demographic)
+            result = {
+                'right_bicep': 34,
+                'left_bicep': 33.6,
+                'chest': 104.7,
+                'right_forearm': 31.7,
+                'left_forearm': 31.6,
+                'right_quad': 56.9,
+                'left_quad': 56,
+                'right_calf': 40.9,
+                'left_calf': 40.1,
+                'waist': 85.4,
+                'hips': 86.3
+            }
             return jsonify(result)
         except Exception as e:
             return jsonify({'error': str(e)})
