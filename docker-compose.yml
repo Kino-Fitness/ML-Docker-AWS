@@ -10,18 +10,6 @@ services:
       - .:/code
     environment:
       - FLASK_ENV=development
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-    depends_on:
-      - redis
-
-  redis:
-    image: "redis:latest"
-    container_name: redis
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis-data:/data 
 
 volumes:
   redis-data:

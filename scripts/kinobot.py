@@ -31,7 +31,8 @@ def get_openai_response(prompt, fitness_goals, chat_history):
     }
 
     # Combine fitness goals as context with the chat history
-    messages = [context_message] + chat_history
+    # messages = [context_message] + chat_history
+    messages = [context_message] 
 
     # Add the new user prompt
     messages.append({"role": "user", "content": prompt})
@@ -42,7 +43,7 @@ def get_openai_response(prompt, fitness_goals, chat_history):
     )
 
     # Append the assistant's response to the chat history
-    chat_history.append({"role": "user", "content": prompt})
-    chat_history.append({"role": "assistant", "content": chat_completion.choices[0].message.content})
+    # chat_history.append({"role": "user", "content": prompt})
+    # chat_history.append({"role": "assistant", "content": chat_completion.choices[0].message.content})
 
     return chat_completion.choices[0].message.content, chat_history
