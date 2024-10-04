@@ -81,9 +81,11 @@ def ensemble_predict(X_front, X_back, X_tabular):
     weighted_avg_prediction = float(np.sum(predictions, axis=0) / sum(weights))
     rounded_prediction = np.round(weighted_avg_prediction, 2)
 
-    response = {"body_fat_percentage": rounded_prediction}
+    response = {
+        'body_fat_percentage': rounded_prediction
+    }
     
-    return json.dumps(response)
+    return response
 
 def load_models():
     for i in range(num_folds):
