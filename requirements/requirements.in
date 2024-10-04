@@ -13,3 +13,4 @@ mysql-connector-python
 openai
 redis
 gunicorn
+ultralytics

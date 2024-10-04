@@ -7,70 +7,6 @@ from tensorflow.keras.models import load_model
 import boto3
 import keras
 
-def preprocess(frontImage, backImage, weight, height, gender, demographic):
-    frontImage = frontImage.resize((224, 224)).convert('RGB')
-    backImage = backImage.resize((224, 224)).convert('RGB')
-    
-    frontImage = np.array(frontImage)
-    backImage = np.array(backImage)
-    
-    gender_map = {'male': 0, 'female': 1}
-    demographic_map = {"white": 0, "black": 1, "asian": 2, "hispanic": 3}
-
-    tabular_data = np.array([
-        int(weight), 
-        int(height), 
-        gender_map[gender],
-        demographic_map[demographic]
-    ])
-    
-    # Ensure all inputs have a batch dimension
-    frontImage = np.expand_dims(frontImage, axis=0)
-    backImage = np.expand_dims(backImage, axis=0)
-    tabular_data = np.expand_dims(tabular_data, axis=0)
-
-    return frontImage, backImage, tabular_data
-
-def get_predictions(frontImage, backImage, weight, height, gender, demographic):
-    model_path = '/code/files/model.keras'
-
-    if not os.path.exists(model_path):
-        bucket_name = 'ml-models-kino'
-        file_key = 'contralateral-measurements/model.keras'
-        local_file_name = model_path
-
-        # Download the .keras file from S3
-        s3 = boto3.client(
-            's3',
-            aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
-            aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
-        )
-        s3.download_file(bucket_name, file_key, local_file_name)
-
-    model = load_model(model_path)
-
-    front_image, back_image, tabular_data = preprocess(frontImage, backImage, weight, height, gender, demographic)
-
-    predictions_right_bicep, predictions_left_bicep, predictions_chest, predictions_right_forearm, predictions_left_forearm, predictions_right_quad, predictions_left_quad, predictions_right_calf, predictions_left_calf, predictions_waist, predictions_hips, predictions_body_pose = model.predict([front_image, back_image, tabular_data])
-    
-    def decode_scalar(vector, output):
-        return [np.round(s2g[output].decode(prediction), 1) for prediction in vector]
-
-    predictions = {
-        'right_bicep': decode_scalar(predictions_right_bicep, 'right_bicep'),
-        'left_bicep': decode_scalar(predictions_left_bicep, 'left_bicep'),
-        'chest': decode_scalar(predictions_chest, 'chest'),
-        'right_forearm': decode_scalar(predictions_right_forearm, 'right_forearm'),
-        'left_forearm': decode_scalar(predictions_left_forearm, 'left_forearm'),
-        'right_quad': decode_scalar(predictions_right_quad, 'right_quad'),
-        'left_quad': decode_scalar(predictions_left_quad, 'left_quad'),
-        'right_calf': decode_scalar(predictions_right_calf, 'right_calf'),
-        'left_calf': decode_scalar(predictions_left_calf, 'left_calf'),
-        'waist': decode_scalar(predictions_waist, 'waist'),
-        'hips': decode_scalar(predictions_hips, 'hips')
-    }
-    return predictions
-
 class Scalar2Gaussian():
     def __init__(self,min=0.0,max=99.0,sigma=4.0,bins=1000):
         self.min, self.max, self.bins, self.sigma = float(min), float(max), bins, sigma
@@ -140,4 +76,69 @@ def l1_l2_loss(y_true, y_pred, output):
 def loss_wrapper(output):
     def loss_fn(y_true, y_pred):
         return l1_l2_loss(y_true, y_pred, output)
-    return loss_fn
+    
+custom_objects = {
+    'l1_l2_loss': l1_l2_loss
+}
+model_path = '/code/files/model.keras'
+if not os.path.exists(model_path):
+    bucket_name = 'ml-models-kino'
+    file_key = 'contralateral-measurements/model.keras'
+    local_file_name = model_path
+
+    # Download the .keras file from S3
+    s3 = boto3.client(
+        's3',
+        aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+        aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
+    )
+    s3.download_file(bucket_name, file_key, local_file_name)
+
+model = load_model(model_path, custom_objects=custom_objects)
+
+def preprocess(frontImage, backImage, weight, height, gender, demographic):
+    frontImage = frontImage.resize((224, 224)).convert('RGB')
+    backImage = backImage.resize((224, 224)).convert('RGB')
+    
+    frontImage = np.array(frontImage)
+    backImage = np.array(backImage)
+    
+    gender_map = {'male': 0, 'female': 1}
+    demographic_map = {"white": 0, "black": 1, "asian": 2, "hispanic": 3}
+
+    tabular_data = np.array([
+        int(weight), 
+        int(height), 
+        gender_map[gender],
+        demographic_map[demographic]
+    ])
+    
+    # Ensure all inputs have a batch dimension
+    frontImage = np.expand_dims(frontImage, axis=0)
+    backImage = np.expand_dims(backImage, axis=0)
+    tabular_data = np.expand_dims(tabular_data, axis=0)
+
+    return frontImage, backImage, tabular_data
+
+def get_predictions(frontImage, backImage, weight, height, gender, demographic):
+    front_image, back_image, tabular_data = preprocess(frontImage, backImage, weight, height, gender, demographic)
+
+    predictions_right_bicep, predictions_left_bicep, predictions_chest, predictions_right_forearm, predictions_left_forearm, predictions_right_quad, predictions_left_quad, predictions_right_calf, predictions_left_calf, predictions_waist, predictions_hips, predictions_body_pose = model.predict([front_image, back_image, tabular_data])
+    
+    def decode_scalar(vector, output):
+        return np.round(float(s2g[output].decode(vector)), 2) 
+    
+    predictions = {
+        'right_bicep': decode_scalar(predictions_right_bicep, 'right_bicep'),
+        'left_bicep': decode_scalar(predictions_left_bicep, 'left_bicep'),
+        'chest': decode_scalar(predictions_chest, 'chest'),
+        'right_forearm': decode_scalar(predictions_right_forearm, 'right_forearm'),
+        'left_forearm': decode_scalar(predictions_left_forearm, 'left_forearm'),
+        'right_quad': decode_scalar(predictions_right_quad, 'right_quad'),
+        'left_quad': decode_scalar(predictions_left_quad, 'left_quad'),
+        'right_calf': decode_scalar(predictions_right_calf, 'right_calf'),
+        'left_calf': decode_scalar(predictions_left_calf, 'left_calf'),
+        'waist': decode_scalar(predictions_waist, 'waist'),
+        'hips': decode_scalar(predictions_hips, 'hips')
+    }
+    return predictions

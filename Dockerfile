@@ -7,12 +7,13 @@ WORKDIR /code
 
 # install python requirements
 RUN pip install --upgrade pip
-# RUN apt-get update && apt-get install -y libgl1-mesa-glx
 
 # Install AWS CLI
 RUN apt-get update && \
     apt-get install -y awscli && \
     apt-get clean
+
+RUN apt-get update && apt-get install -y libgl1-mesa-glx
 
 # copy just requirements and install before rest of code to avoid having to
 # reinstall packages during build every time code changes
