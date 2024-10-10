@@ -80,7 +80,12 @@ def loss_wrapper(output):
 custom_objects = {
     'l1_l2_loss': l1_l2_loss
 }
-model_path = '/code/files/model.keras'
+
+model_dir = '/code/files'
+model_path = os.path.join(model_dir, 'model.keras')
+if not os.path.exists(model_dir):
+    os.makedirs(model_dir)
+
 if not os.path.exists(model_path):
     bucket_name = 'ml-models-kino'
     file_key = 'contralateral-measurements/model.keras'
@@ -93,8 +98,6 @@ if not os.path.exists(model_path):
         aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
     )
     s3.download_file(bucket_name, file_key, local_file_name)
-
-model = load_model(model_path, custom_objects=custom_objects)
 
 def preprocess(frontImage, backImage, weight, height, gender, demographic):
     frontImage = frontImage.resize((224, 224)).convert('RGB')
