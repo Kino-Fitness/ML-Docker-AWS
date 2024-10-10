@@ -11,5 +11,5 @@ services:
     environment:
       - FLASK_ENV=development
 
-volumes:
-  redis-data:
+# volumes:
+#   redis-data:

@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 import os
 import tempfile
-import redis
+# import redis
 import json
 from PIL import Image
 from scripts.measurements import get_predictions
@@ -239,6 +239,6 @@ def vbc_measurements():
             return jsonify({'error': str(e)})
     else:
         return jsonify({'error': 'Method not allowed'})
-        
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

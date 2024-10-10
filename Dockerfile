@@ -25,5 +25,5 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # copy code files
 COPY . /code/
 
-CMD ["gunicorn", "app:app", "--workers", "5", "--timeout", "120", "--bind", "0.0.0.0:5000"]
+CMD ["python", "app.py"]
 EXPOSE 5000
