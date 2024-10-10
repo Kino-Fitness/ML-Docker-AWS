@@ -1,12 +1,10 @@
 import numpy as np
 import os
-import boto3
 from ultralytics import YOLO
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import models
-import json
 
 model_dir = '/code/files/vbc'
 mean = np.array([0.485, 0.456, 0.406])
@@ -55,8 +53,6 @@ def get_vbc(frontImage, backImage, weight, height, gender, demographic, waist, h
     return ensemble_predict(X_front_images, X_back_images, X_tabular)
 
 def ensemble_predict(X_front, X_back, X_tabular):
-    if not os.path.exists(model_dir):
-        load_models()
 
     predictions = []
     for i in range(num_folds):
@@ -86,22 +82,6 @@ def ensemble_predict(X_front, X_back, X_tabular):
     }
     
     return response
-
-def load_models():
-    for i in range(num_folds):
-        model_path = os.path.join(model_dir, f'model_fold_{i}.pt')
-        
-        if not os.path.exists(model_path):
-            bucket_name = 'ml-models-kino'
-            file_key = f'vbc/model_fold_{i}.pt'
-            local_file_name = model_path
-
-            s3 = boto3.client(
-                's3',
-                aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
-                aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
-            )
-            s3.download_file(bucket_name, file_key, local_file_name)
 
 def preprocess_image(image):
     try:

@@ -25,5 +25,5 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # copy code files
 COPY . /code/
 
-CMD ["python", "app.py"]
+CMD ["sh", "-c", "python /code/scripts/initalize_models.py && python /code/app.py"]
 EXPOSE 5000

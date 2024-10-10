@@ -4,7 +4,7 @@ import tempfile
 # import redis
 import json
 from PIL import Image
-# from scripts.measurements import get_predictions
+from scripts.measurements import get_predictions
 from scripts.kinoscore import get_kino_score
 from scripts.database import get_fitness_goals
 from scripts.kinobot import get_openai_response
@@ -163,22 +163,8 @@ def predict():
             
             frontImage = Image.open(tempFrontImage.name).convert('RGB')
             backImage = Image.open(tempBackImage.name).convert('RGB')
-            # result = get_predictions(frontImage, backImage, weight, height, gender, demographic)
-            # return result
-            result = {
-                'right_bicep': 34,
-                'left_bicep': 33.6,
-                'chest': 104.7,
-                'right_forearm': 31.7,
-                'left_forearm': 31.6,
-                'right_quad': 56.9,
-                'left_quad': 56,
-                'right_calf': 40.9,
-                'left_calf': 40.1,
-                'waist': 85.4,
-                'hips': 86.3
-            }
-            return jsonify(result)
+            result = get_predictions(frontImage, backImage, weight, height, gender, demographic)
+            return result
         
         except Exception as e:
             return jsonify({'error': str(e)})
@@ -244,20 +230,8 @@ def vbc_measurements():
             backImage = Image.open(tempBackImage.name).convert('RGB')
 
             vbc = get_vbc(frontImage, backImage, weight, height, gender, demographic, waist, hips)
-            # measurements = get_predictions(frontImage, backImage, weight, height, gender, demographic)
-            measurements =  {
-                'right_bicep': 34,
-                'left_bicep': 33.6,
-                'chest': 104.7,
-                'right_forearm': 31.7,
-                'left_forearm': 31.6,
-                'right_quad': 56.9,
-                'left_quad': 56,
-                'right_calf': 40.9,
-                'left_calf': 40.1,
-                'waist': 85.4,
-                'hips': 86.3
-            }
+            measurements = get_predictions(frontImage, backImage, weight, height, gender, demographic)
+            
             combined = {**vbc, **measurements}
             return json.dumps(combined, indent=4)
         
