@@ -2,6 +2,9 @@ import os
 import boto3
 import torch
 import shutil
+from dotenv import load_dotenv
+
+load_dotenv()
 
 model_dir = '/code/files/vbc'
 num_folds = 8
