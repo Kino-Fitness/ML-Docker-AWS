@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, render_template
+from dotenv import load_dotenv
 import os
 import tempfile
 # import redis
@@ -9,10 +10,8 @@ from scripts.kinoscore import get_kino_score
 from scripts.database import get_fitness_goals
 from scripts.kinobot import get_openai_response
 from scripts.vbc import get_vbc
-from dotenv import load_dotenv
 
 app = Flask(__name__)
-
 load_dotenv()
 
 # Redis configuration

@@ -1,29 +1,27 @@
 FROM python:3.11-bookworm
 ENV PYTHONUNBUFFERED=1
 
-# create code directory
+# Create code directory
 RUN mkdir /code
 WORKDIR /code
 
-# install python requirements
-RUN pip install --upgrade pip
-
-# Install AWS CLI
+# Install AWS CLI and libgl1-mesa-glx in a single step and clean up after installation
 RUN apt-get update && \
-    apt-get install -y awscli && \
-    apt-get clean
+    apt-get install -y awscli libgl1-mesa-glx && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && apt-get install -y libgl1-mesa-glx
-
-# copy just requirements and install before rest of code to avoid having to
+# Copy just requirements and install before rest of code to avoid having to
 # reinstall packages during build every time code changes
 COPY requirements/ /code/requirements/
 COPY requirements/requirements.txt .
+
+# Install Python requirements
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements/requirements.txt
 
-# copy code files
+# Copy code files
 COPY . /code/
 
-CMD ["sh", "-c", "python /code/scripts/initalize_models.py && python /code/app.py"]
+# Initialize app and run Gunicorn server
+CMD python /code/initalize.py && gunicorn -w 4 -b 0.0.0.0:5000 --timeout 180 app:app
 EXPOSE 5000

@@ -81,11 +81,12 @@ custom_objects = {
     'l1_l2_loss': l1_l2_loss
 }
 
-model_dir = '/code/files/measurements'
-model_path = os.path.join(model_dir, 'model.keras')
+# model_path = '/code/files/measurements/model.keras'
+# weights_path = '/code/files/measurements/model.weights.h5'
+# # Load the model once it's downloaded
+# model = load_model(model_path, custom_objects=custom_objects)
+# model.load_weights(weights_path)
 
-# Load the model once it's downloaded
-model = load_model(model_path, custom_objects=custom_objects)
 
 def preprocess(frontImage, backImage, weight, height, gender, demographic):
     frontImage = frontImage.resize((224, 224)).convert('RGB')
@@ -112,24 +113,37 @@ def preprocess(frontImage, backImage, weight, height, gender, demographic):
     return frontImage, backImage, tabular_data
 
 def get_predictions(frontImage, backImage, weight, height, gender, demographic):
-    front_image, back_image, tabular_data = preprocess(frontImage, backImage, weight, height, gender, demographic)
+    # front_image, back_image, tabular_data = preprocess(frontImage, backImage, weight, height, gender, demographic)
 
-    predictions_right_bicep, predictions_left_bicep, predictions_chest, predictions_right_forearm, predictions_left_forearm, predictions_right_quad, predictions_left_quad, predictions_right_calf, predictions_left_calf, predictions_waist, predictions_hips, predictions_body_pose = model.predict([front_image, back_image, tabular_data])
+    # predictions_right_bicep, predictions_left_bicep, predictions_chest, predictions_right_forearm, predictions_left_forearm, predictions_right_quad, predictions_left_quad, predictions_right_calf, predictions_left_calf, predictions_waist, predictions_hips, predictions_body_pose = model.predict([front_image, back_image, tabular_data])
     
-    def decode_scalar(vector, output):
-        return np.round(float(s2g[output].decode(vector)), 2) 
+    # def decode_scalar(vector, output):
+    #     return np.round(float(s2g[output].decode(vector)), 2) 
     
-    predictions = {
-        'right_bicep': decode_scalar(predictions_right_bicep, 'right_bicep'),
-        'left_bicep': decode_scalar(predictions_left_bicep, 'left_bicep'),
-        'chest': decode_scalar(predictions_chest, 'chest'),
-        'right_forearm': decode_scalar(predictions_right_forearm, 'right_forearm'),
-        'left_forearm': decode_scalar(predictions_left_forearm, 'left_forearm'),
-        'right_quad': decode_scalar(predictions_right_quad, 'right_quad'),
-        'left_quad': decode_scalar(predictions_left_quad, 'left_quad'),
-        'right_calf': decode_scalar(predictions_right_calf, 'right_calf'),
-        'left_calf': decode_scalar(predictions_left_calf, 'left_calf'),
-        'waist': decode_scalar(predictions_waist, 'waist'),
-        'hips': decode_scalar(predictions_hips, 'hips')
-    }
-    return predictions
+    # predictions = {
+    #     'right_bicep': decode_scalar(predictions_right_bicep, 'right_bicep'),
+    #     'left_bicep': decode_scalar(predictions_left_bicep, 'left_bicep'),
+    #     'chest': decode_scalar(predictions_chest, 'chest'),
+    #     'right_forearm': decode_scalar(predictions_right_forearm, 'right_forearm'),
+    #     'left_forearm': decode_scalar(predictions_left_forearm, 'left_forearm'),
+    #     'right_quad': decode_scalar(predictions_right_quad, 'right_quad'),
+    #     'left_quad': decode_scalar(predictions_left_quad, 'left_quad'),
+    #     'right_calf': decode_scalar(predictions_right_calf, 'right_calf'),
+    #     'left_calf': decode_scalar(predictions_left_calf, 'left_calf'),
+    #     'waist': decode_scalar(predictions_waist, 'waist'),
+    #     'hips': decode_scalar(predictions_hips, 'hips')
+    # }
+    # return predictions
+    return  {
+                'right_bicep': 34,
+                'left_bicep': 33.6,
+                'chest': 104.7,
+                'right_forearm': 31.7,
+                'left_forearm': 31.6,
+                'right_quad': 56.9,
+                'left_quad': 56,
+                'right_calf': 40.9,
+                'left_calf': 40.1,
+                'waist': 85.4,
+                'hips': 86.3
+            }
