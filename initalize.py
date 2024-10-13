@@ -19,7 +19,10 @@ if os.path.exists(measurements_model_dir):
 os.makedirs(measurements_model_dir, exist_ok=True)
 
 # Initialize the S3 client without explicit AWS credentials
-s3 = boto3.client('s3')
+s3 = boto3.client('s3',
+    aws_access_key_id="AKIATIXKZ4OKCOYIXSTC",
+    aws_secret_access_key="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"
+)
 
 # Download the model files for each fold from S3
 for i in range(num_folds):
