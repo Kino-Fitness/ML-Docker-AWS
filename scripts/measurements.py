@@ -81,9 +81,8 @@ custom_objects = {
     'l1_l2_loss': l1_l2_loss
 }
 
-model_path = '../files/measurements/model.keras'
-weights_path = '../files/measurements/model.weights.h5'
-# Load the model once it's downloaded
+model_path = '/code/files/measurements/model.keras'
+weights_path = '/code/files/measurements/model.weights.h5'
 model = load_model(model_path, custom_objects=custom_objects)
 model.load_weights(weights_path)
 
