@@ -5,7 +5,7 @@ import tempfile
 # import redis
 import json
 from PIL import Image
-from scripts.measurements import get_predictions
+from measurements import get_predictions
 from scripts.kinoscore import get_kino_score
 from scripts.database import get_fitness_goals
 from scripts.kinobot import get_openai_response

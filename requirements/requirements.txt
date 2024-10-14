@@ -314,7 +314,7 @@ typing-extensions==4.12.2
     #   torch
 tzdata==2024.2
     # via pandas
-ultralytics==8.2.103
+ultralytics==8.3.12
     # via -r requirements.in
 ultralytics-thop==2.0.8
     # via ultralytics

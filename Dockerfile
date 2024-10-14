@@ -23,5 +23,6 @@ RUN pip install --no-cache-dir --upgrade pip && \
 COPY . /code/
 
 # Initialize app and run Gunicorn server
-CMD python /code/initalize.py && gunicorn -w 4 -b 0.0.0.0:5000 --timeout 180 app:app
+
+CMD python initalize.py && app.py
 EXPOSE 5000
