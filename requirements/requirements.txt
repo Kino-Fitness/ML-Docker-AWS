@@ -11,7 +11,7 @@ absl-py==2.1.0
     #   tensorflow
 annotated-types==0.7.0
     # via pydantic
-anyio==4.4.0
+anyio==4.6.2
     # via
     #   httpx
     #   openai
@@ -19,20 +19,22 @@ astunparse==1.6.3
     # via tensorflow
 blinker==1.8.2
     # via flask
-boto3==1.34.153
+boto3==1.35.39
     # via -r requirements/requirements.in
-botocore==1.34.153
+botocore==1.35.39
     # via
     #   boto3
     #   s3transfer
-build==1.2.1
+build==1.2.2.post1
     # via pip-tools
-certifi==2024.7.4
+cachetools==5.5.0
+    # via google-auth
+certifi==2024.8.30
     # via
     #   httpcore
     #   httpx
     #   requests
-charset-normalizer==3.3.2
+charset-normalizer==3.4.0
     # via requests
 click==8.1.7
     # via
@@ -44,7 +46,7 @@ cycler==0.12.1
     # via matplotlib
 distro==1.9.0
     # via openai
-filelock==3.16.0
+filelock==3.16.1
     # via
     #   torch
     #   triton
@@ -52,15 +54,21 @@ flask==3.0.3
     # via -r requirements/requirements.in
 flatbuffers==24.3.25
     # via tensorflow
-fonttools==4.53.1
+fonttools==4.54.1
     # via matplotlib
 fsspec==2024.9.0
     # via torch
 gast==0.6.0
     # via tensorflow
+google-auth==2.35.0
+    # via
+    #   google-auth-oauthlib
+    #   tensorboard
+google-auth-oauthlib==1.0.0
+    # via tensorboard
 google-pasta==0.2.0
     # via tensorflow
-grpcio==1.64.1
+grpcio==1.66.2
     # via
     #   tensorboard
     #   tensorflow
@@ -68,15 +76,15 @@ gunicorn==23.0.0
     # via -r requirements/requirements.in
 h11==0.14.0
     # via httpcore
-h5py==3.11.0
+h5py==3.12.1
     # via
     #   keras
     #   tensorflow
-httpcore==1.0.5
+httpcore==1.0.6
     # via httpx
 httpx==0.27.2
     # via openai
-idna==3.7
+idna==3.10
     # via
     #   anyio
     #   httpx
@@ -87,7 +95,7 @@ jinja2==3.1.4
     # via
     #   flask
     #   torch
-jiter==0.5.0
+jiter==0.6.1
     # via openai
 jmespath==1.0.1
     # via
@@ -95,7 +103,7 @@ jmespath==1.0.1
     #   botocore
 joblib==1.4.2
     # via scikit-learn
-keras==3.4.1
+keras==2.14.0
     # via
     #   -r requirements/requirements.in
     #   tensorflow
@@ -103,11 +111,9 @@ kiwisolver==1.4.7
     # via matplotlib
 libclang==18.1.1
     # via tensorflow
-markdown==3.6
+markdown==3.7
     # via tensorboard
-markdown-it-py==3.0.0
-    # via rich
-markupsafe==2.1.5
+markupsafe==3.0.1
     # via
     #   jinja2
     #   werkzeug
@@ -115,9 +121,7 @@ matplotlib==3.9.2
     # via
     #   seaborn
     #   ultralytics
-mdurl==0.1.2
-    # via markdown-it-py
-ml-dtypes==0.4.0
+ml-dtypes==0.2.0
     # via
     #   keras
     #   tensorflow
@@ -125,20 +129,16 @@ mpmath==1.3.0
     # via sympy
 mysql-connector-python==9.0.0
     # via -r requirements/requirements.in
-namex==0.0.8
-    # via keras
-networkx==3.3
+networkx==3.4.1
     # via torch
-numpy==1.26.4
+numpy==2.1.2
     # via
     #   -r requirements/requirements.in
     #   contourpy
     #   h5py
-    #   keras
     #   matplotlib
     #   ml-dtypes
     #   opencv-python
-    #   opt-einsum
     #   pandas
     #   scikit-learn
     #   scipy
@@ -173,20 +173,20 @@ nvidia-cusparse-cu12==12.1.0.106
     #   torch
 nvidia-nccl-cu12==2.20.5
     # via torch
-nvidia-nvjitlink-cu12==12.6.68
+nvidia-nvjitlink-cu12==12.6.77
     # via
     #   nvidia-cusolver-cu12
     #   nvidia-cusparse-cu12
 nvidia-nvtx-cu12==12.1.105
     # via torch
-openai==1.43.0
+oauthlib==3.2.2
+    # via requests-oauthlib
+openai==1.51.2
     # via -r requirements/requirements.in
 opencv-python==4.10.0.84
     # via ultralytics
-opt-einsum==3.3.0
+opt-einsum==3.4.0
     # via tensorflow
-optree==0.12.1
-    # via keras
 packaging==24.1
     # via
     #   build
@@ -194,7 +194,7 @@ packaging==24.1
     #   keras
     #   matplotlib
     #   tensorflow
-pandas==2.2.2
+pandas==2.2.3
     # via
     #   -r requirements/requirements.in
     #   seaborn
@@ -207,7 +207,7 @@ pillow==10.4.0
     #   ultralytics
 pip-tools==7.4.1
     # via -r requirements/requirements.in
-protobuf==4.25.3
+protobuf==4.25.5
     # via
     #   tensorboard
     #   tensorflow
@@ -215,15 +215,19 @@ psutil==6.0.0
     # via ultralytics
 py-cpuinfo==9.0.0
     # via ultralytics
-pydantic==2.8.2
+pyasn1==0.6.1
+    # via
+    #   pyasn1-modules
+    #   rsa
+pyasn1-modules==0.4.1
+    # via google-auth
+pydantic==2.9.2
     # via openai
-pydantic-core==2.20.1
+pydantic-core==2.23.4
     # via pydantic
-pygments==2.18.0
-    # via rich
-pyparsing==3.1.4
+pyparsing==3.2.0
     # via matplotlib
-pyproject-hooks==1.1.0
+pyproject-hooks==1.2.0
     # via
     #   build
     #   pip-tools
@@ -234,23 +238,27 @@ python-dateutil==2.9.0.post0
     #   pandas
 python-dotenv==1.0.1
     # via -r requirements/requirements.in
-pytz==2024.1
+pytz==2024.2
     # via pandas
 pyyaml==6.0.2
     # via ultralytics
-redis==5.0.8
+redis==5.1.1
     # via -r requirements/requirements.in
 requests==2.32.3
     # via
+    #   requests-oauthlib
+    #   tensorboard
     #   tensorflow
     #   ultralytics
-rich==13.7.1
-    # via keras
-s3transfer==0.10.2
+requests-oauthlib==2.0.0
+    # via google-auth-oauthlib
+rsa==4.9
+    # via google-auth
+s3transfer==0.10.3
     # via boto3
-scikit-learn==1.5.1
+scikit-learn==1.5.2
     # via -r requirements/requirements.in
-scipy==1.14.0
+scipy==1.14.1
     # via
     #   scikit-learn
     #   ultralytics
@@ -268,17 +276,19 @@ sniffio==1.3.1
     #   anyio
     #   httpx
     #   openai
-sympy==1.13.2
+sympy==1.13.3
     # via torch
-tensorboard==2.17.0
+tensorboard==2.14.1
     # via tensorflow
 tensorboard-data-server==0.7.2
     # via tensorboard
-tensorflow==2.17.0
+tensorflow==2.14.0
     # via -r requirements/requirements.in
+tensorflow-estimator==2.14.0
+    # via tensorflow
 tensorflow-io-gcs-filesystem==0.37.1
     # via tensorflow
-termcolor==2.4.0
+termcolor==2.5.0
     # via tensorflow
 threadpoolctl==3.5.0
     # via scikit-learn
@@ -303,25 +313,25 @@ typing-extensions==4.12.2
     #   pydantic-core
     #   tensorflow
     #   torch
-tzdata==2024.1
+tzdata==2024.2
     # via pandas
-ultralytics==8.2.92
+ultralytics==8.3.12
     # via -r requirements/requirements.in
-ultralytics-thop==2.0.6
+ultralytics-thop==2.0.9
     # via ultralytics
-urllib3==2.2.2
+urllib3==2.2.3
     # via
     #   botocore
     #   requests
-werkzeug==3.0.3
+werkzeug==3.0.4
     # via
     #   flask
     #   tensorboard
-wheel==0.43.0
+wheel==0.44.0
     # via
     #   astunparse
     #   pip-tools
-wrapt==1.16.0
+wrapt==1.14.1
     # via tensorflow
 
 # The following packages are considered to be unsafe in a requirements file:

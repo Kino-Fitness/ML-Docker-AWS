@@ -1,11 +1,10 @@
-numpy
+numpy<2
 pandas
 scikit-learn
 flask
 pillow
 keras
-numpy
-tensorflow
+tensorflow==2.16.2
 pip-tools
 boto3
 python-dotenv
