@@ -24,5 +24,5 @@ COPY . /code/
 
 # Initialize app and run Gunicorn server
 
-CMD python initalize.py && app.py
+CMD python initalize.py && python app.py
 EXPOSE 5000
