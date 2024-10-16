@@ -62,7 +62,7 @@ def kino_bot():
             # r.set(chat_history_key, json.dumps(updated_chat_history))
             # r.expire(chat_history_key, expiration_time) 
 
-            return jsonify({'response': response})
+            return jsonify({'response': response}), 200
 
         except Exception as e:
             return jsonify({'error': f"An internal server error occurred: {str(e)}"}), 500
@@ -113,7 +113,7 @@ def vbc():
             frontImage = Image.open(tempFrontImage.name).convert('RGB')
             backImage = Image.open(tempBackImage.name).convert('RGB')
             result = get_vbc(frontImage, backImage, weight, height, gender, demographic, waist, hips)
-            return jsonify(result)
+            return jsonify(result), 200
 
         except Exception as e:
             return jsonify({'error': f"An internal server error occurred: {str(e)}"}), 500
@@ -162,7 +162,7 @@ def predict():
             frontImage = Image.open(tempFrontImage.name).convert('RGB')
             backImage = Image.open(tempBackImage.name).convert('RGB')
             result = get_predictions(frontImage, backImage, weight, height, gender, demographic)
-            return jsonify(result)
+            return jsonify(result), 200
 
         except Exception as e:
             return jsonify({'error': f"An internal server error occurred: {str(e)}"}), 500
@@ -177,7 +177,7 @@ def kino_score():
             if not user_data:
                 return jsonify({'error': 'Missing JSON data in request'}), 400
             result = get_kino_score(user_data)
-            return jsonify(result)
+            return jsonify(result), 200
         except Exception as e:
             return jsonify({'error': f"An internal server error occurred: {str(e)}"}), 500
     else:
@@ -231,7 +231,7 @@ def vbc_measurements():
             measurements_result = get_predictions(frontImage, backImage, weight, height, gender, demographic)
 
             combined = {**vbc_result, **measurements_result}
-            return jsonify(combined)
+            return jsonify(combined), 200
 
         except Exception as e:
             return jsonify({'error': f"An internal server error occurred: {str(e)}"}), 500

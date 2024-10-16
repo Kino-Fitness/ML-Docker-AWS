@@ -9,7 +9,7 @@ from torchvision import models
 model_dir = '/code/files/vbc'
 mean = np.array([0.485, 0.456, 0.406])
 std = np.array([0.229, 0.224, 0.225])
-weights = [1] * 8
+weights = [0.0022, 0.0033, 0.0031, 0.0028, 0.0036, 0.0030, 0.0044, 0.0038]
 num_folds = 8
 OUTPUT_METRICS = ['body_fat', 'muscle_mass', 'bone_mass', 'bone_density']
 yolo_model = YOLO("yolov8n.pt")
