@@ -80,9 +80,6 @@ def loss_wrapper(output):
 custom_objects = {
     'l1_l2_loss': l1_l2_loss
 }
-import os
-
-print("hereeeeeeeeee", os.getcwd())
 
 model_path = './files/measurements/model.keras'
 weights_path = './files/measurements/model.weights.h5'
