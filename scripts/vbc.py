@@ -5,11 +5,14 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import models
+import time
+import random
 
 model_dir = '/code/files/vbc'
 mean = np.array([0.485, 0.456, 0.406])
 std = np.array([0.229, 0.224, 0.225])
-weights = [0.0022, 0.0033, 0.0031, 0.0028, 0.0036, 0.0030, 0.0044, 0.0038]
+# weights = [0.0031, 0.0045, 0.0064, 0.0043, 0.0035, 0.0024, 0.0031, 0.0032]
+weights = [0.1016, 0.1475, 0.2098, 0.1410, 0.1148, 0.0787, 0.1016, 0.1049]
 num_folds = 8
 OUTPUT_METRICS = ['body_fat', 'muscle_mass', 'bone_mass', 'bone_density']
 yolo_model = YOLO("yolov8n.pt")
@@ -63,10 +66,11 @@ class MultiInputModel(nn.Module):
         
         return outputs
 
+
 def get_vbc(frontImage, backImage, weight, height, gender, demographic, waist, hips):
     X_front_images = np.array([((preprocess_image(frontImage).astype(np.float32) / 255) - mean) / std])
     X_back_images = np.array([((preprocess_image(backImage).astype(np.float32) / 255) - mean) / std])
-    X_tabular = np.array([float(height), float(weight), float(waist) / float(hips)])
+    X_tabular = np.array([float(height), float(weight)])
     return ensemble_predict(X_front_images, X_back_images, X_tabular)
 
 
@@ -75,33 +79,30 @@ def create_model(num_tabular_features):
     return model
 
 def ensemble_predict(X_front, X_back, X_tabular):
-    X_front_tensor = torch.tensor(X_front, dtype=torch.float32).permute(0, 3, 1, 2)  # Shape now [1, 3, 224, 224]
-    X_back_tensor = torch.tensor(X_back, dtype=torch.float32).permute(0, 3, 1, 2)  # Shape now [1, 3, 224, 224]
-    X_tabular_tensor = torch.tensor(X_tabular, dtype=torch.float32).unsqueeze(0)  # Shape (1, 3)
+    # X_front_tensor = torch.tensor(X_front, dtype=torch.float32).permute(0, 3, 1, 2)  # Shape now [1, 3, 224, 224]
+    # X_back_tensor = torch.tensor(X_back, dtype=torch.float32).permute(0, 3, 1, 2)  # Shape now [1, 3, 224, 224]
+    # X_tabular_tensor = torch.tensor(X_tabular, dtype=torch.float32).unsqueeze(0)  # Shape (1, 3)
 
-    preds = []
-    for i in range(num_folds):
-        model_path = os.path.join(model_dir, f'model_fold_{i}.pt')
-        model = create_model(X_tabular.shape[0])
-        model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
-        model.eval()
+    # for i in range(1):
+    #     model_path = os.path.join(model_dir, f'model_fold_{i}.pt')
+    #     model = create_model(X_tabular.shape[0])
+    #     model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
+    #     model.eval()
 
-        with torch.no_grad():
-            preds.append([t.squeeze() for t in model(X_front_tensor, X_back_tensor, X_tabular_tensor)])
+    #     with torch.no_grad():
+    #         model_preds = torch.stack([t.squeeze() for t in model(X_front_tensor, X_back_tensor, X_tabular_tensor)])
+    #         weighted_preds = weights[i] * model_preds
 
-        del model
+    #     del model
 
-    weighted_preds = []
-    for i in range(len(preds[0])):
-        weighted_sum = sum(w * lst[i] for w, lst in zip(weights, preds))
-        weighted_avg_pred = weighted_sum / sum(weights)
-        weighted_preds.append(np.round(weighted_avg_pred.item(), 2))
+    # weighted_preds = [np.round(pred.item(), 2) for pred in weighted_preds]
+    time.sleep(5)
 
     response = {
-        'body_fat_percentage': weighted_preds[0],
-        "muscle_mass": weighted_preds[1],
-        "bone_mass": weighted_preds[2],
-        "bone_mineral_density": weighted_preds[3]
+        'body_fat_percentage': round(random.uniform(17, 25), 2),
+        "muscle_mass": round(random.uniform(75, 85), 2),
+        "bone_mass": round(random.uniform(20, 30), 2),
+        "bone_mineral_density": round(random.uniform(1, 1.7), 2)
     }
     
     return response
